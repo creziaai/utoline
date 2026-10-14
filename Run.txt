@@ -1,0 +1,4 @@
+node scripts/build.js
+python -m http.server 8000 --directory dist
+
+http://localhost:8000

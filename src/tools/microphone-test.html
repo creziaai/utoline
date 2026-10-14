@@ -1,0 +1,35 @@
+<div class="tool-panel mic" id="mic">
+  <div class="mic-head">
+    <div>
+      <div class="mic-state" id="mic-state" data-state="idle"><span class="mic-dot" aria-hidden="true"></span><span id="mic-state-text">Ready to test</span></div>
+      <p class="mic-device" id="mic-device">No microphone in use</p>
+    </div>
+    <div class="mic-readout" aria-hidden="true">
+      <span class="mic-readout-value" id="mic-db">&mdash;</span><span class="mic-readout-unit">dB</span>
+    </div>
+  </div>
+
+  <div class="mic-scope">
+    <canvas id="mic-canvas" class="mic-canvas" role="img" aria-label="Live audio waveform"></canvas>
+    <div class="mic-idle" id="mic-idle">Waveform appears here</div>
+  </div>
+
+  <div class="mic-meter-wrap">
+    <div class="mic-meter-label"><span>Input level</span><span id="mic-peak-text">Peak &mdash; dB</span></div>
+    <div class="mic-meter" id="mic-meter" role="meter" aria-label="Input level" aria-valuemin="-60" aria-valuemax="0" aria-valuenow="-60" aria-valuetext="Silent">
+      <div class="mic-meter-fill" id="mic-fill"></div>
+      <div class="mic-meter-peak" id="mic-peak"></div>
+    </div>
+    <div class="mic-ticks" aria-hidden="true"><span>&minus;60</span><span>&minus;40</span><span>&minus;20</span><span>0</span></div>
+  </div>
+
+  <div class="mic-message" id="mic-message" role="status" aria-live="polite" hidden></div>
+
+  <div class="mic-actions">
+    <button class="btn btn-primary" id="mic-start" type="button">Start Test</button>
+    <button class="btn btn-ghost" id="mic-stop" type="button" hidden>Stop Test</button>
+    <button class="btn btn-ghost" id="mic-again" type="button" hidden>Test Again</button>
+  </div>
+
+  <p class="mic-privacy">Processed locally in your browser. Nothing is recorded, stored or uploaded, and audio is never played back.</p>
+</div>

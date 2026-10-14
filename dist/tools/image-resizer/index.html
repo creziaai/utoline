@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Resizer — Free Online Tool | Utoline</title>
+<meta name="description" content="Resize images to exact dimensions or common presets, with optional aspect-ratio lock, entirely in your browser.">
+<!-- Canonical omitted until NEXT_PUBLIC_SITE_URL is configured. -->
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Image Resizer — Free Online Tool | Utoline">
+<meta property="og:description" content="Resize images to exact dimensions or common presets, with optional aspect-ratio lock, entirely in your browser.">
+
+<meta property="og:site_name" content="Utoline">
+<meta property="og:image" content="/og-image.svg">
+<meta name="twitter:image" content="/og-image.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Image Resizer — Free Online Tool | Utoline">
+<meta name="twitter:description" content="Resize images to exact dimensions or common presets, with optional aspect-ratio lock, entirely in your browser.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script src="/assets/js/config.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"/"},{"@type":"ListItem","position":2,"name":"Image Tools","item":"/category/image-tools/"},{"@type":"ListItem","position":3,"name":"Image Resizer","item":"/tools/image-resizer/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Image Resizer","description":"Resize images to exact dimensions or common presets, with optional aspect-ratio lock, entirely in your browser.","url":"/tools/image-resizer/","applicationCategory":"UtilityApplication","operatingSystem":"Any (runs in web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does resizing reduce file size too?","acceptedAnswer":{"@type":"Answer","text":"Usually yes, since fewer pixels generally means a smaller file, but for precise size control use the Image Compressor after resizing."}}]}</script>
+
+</head>
+<body data-tool-slug="image-resizer">
+
+<a href="#main-content" class="skip-link">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <a href="/" class="logo" aria-label="Utoline home"><img src="/logo.svg" alt="Utoline" width="136" height="34"></a>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="/tools/">Tools</a>
+      <a href="/categories/">Categories</a>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="nav-search-trigger" data-search-trigger type="button" aria-label="Search tools"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span>Search tools…</span><kbd>⌘K</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" id="menu-toggle" type="button" aria-label="Open menu">☰</button>
+    </div>
+  </div>
+</header>
+<div class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-panel">
+    <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close menu">×</button>
+    <nav aria-label="Mobile">
+      <a href="/tools/">Tools</a>
+      <a href="/categories/">Categories</a>
+      <a href="/guides/">Guides</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+</div>
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Search tools">
+  <div class="search-panel">
+    <div class="search-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="search-input" type="text" placeholder="Search tools by name, category or keyword…" aria-label="Search tools" autocomplete="off">
+      <button class="icon-btn" id="search-close" type="button" aria-label="Close search">×</button>
+    </div>
+    <div class="search-results" id="search-results" role="listbox"></div>
+  </div>
+</div>
+<main id="main-content">
+
+<section class="container tool-page-header" style="--cat-color:#db2777">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a> / <a href="/category/image-tools/">Image Tools</a> / <span>Image Resizer</span>
+  </nav>
+  <span class="cat-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-5 5"/></svg> Image Tools</span>
+  <h1>Image Resizer</h1>
+  <p class="tool-lede">Resize images to exact dimensions or common presets, with optional aspect-ratio lock, entirely in your browser.</p>
+</section>
+<section class="container" style="--cat-color:#db2777">
+  
+      <div class="tool-panel">
+        <div class="dropzone" id="ir-drop" tabindex="0" role="button" aria-label="Upload image">
+          <input type="file" id="ir-file" accept="image/jpeg,image/png,image/webp" class="visually-hidden">
+          <p>Drag &amp; drop an image here, or <span class="link-text">browse files</span></p>
+        </div>
+        <div id="ir-error" class="alert alert-error" role="alert" hidden></div>
+        <div id="ir-controls" hidden>
+          <div class="grid-3">
+            <div><label class="field-label" for="ir-width">Width (px)</label><input id="ir-width" class="input" type="number"></div>
+            <div><label class="field-label" for="ir-height">Height (px)</label><input id="ir-height" class="input" type="number"></div>
+            <div><label class="field-label" for="ir-preset">Preset</label>
+              <select id="ir-preset" class="select">
+                <option value="">Custom</option>
+                <option value="1920x1080">1920 × 1080</option>
+                <option value="1280x720">1280 × 720</option>
+                <option value="800x600">800 × 600</option>
+                <option value="512x512">512 × 512</option>
+                <option value="1080x1080">1080 × 1080 (square)</option>
+              </select>
+            </div>
+          </div>
+          <label class="check"><input type="checkbox" id="ir-lock" checked> Lock aspect ratio</label>
+          <label class="field-label" for="ir-quality">Output quality (JPG/WebP): <span id="ir-quality-value">90</span>%</label>
+          <input id="ir-quality" type="range" min="10" max="100" value="90" class="range">
+          <div class="toolbar">
+            <button class="btn btn-primary" id="ir-run" type="button">Resize image</button>
+            <button class="btn btn-ghost" id="ir-reset" type="button">Reset</button>
+          </div>
+          <canvas id="ir-canvas" class="preview-img"></canvas>
+          <div class="toolbar" id="ir-download-row" hidden><button class="btn btn-ghost" id="ir-download" type="button">Download resized image</button></div>
+        </div>
+      </div>
+  <section class="tool-completion" data-tool-completion hidden aria-live="polite" aria-atomic="true" data-state="ready">
+    <div class="tool-completion-heading"><span class="tool-completion-mark" aria-hidden="true">✓</span><h2 data-completion-status>Operation Completed Successfully</h2></div>
+    <p data-completion-message></p><div class="tool-completion-result" data-completion-result></div><p class="tool-completion-conclusion" data-completion-conclusion></p>
+    <div class="toolbar toolbar-wrap" data-completion-actions hidden><button class="btn btn-primary" type="button" data-completion-copy>Copy result</button><button class="btn btn-ghost" type="button" data-completion-again>Run again</button></div>
+  </section>
+</section>
+
+<section class="section container prose reveal">
+  <h2>How to use Image Resizer</h2>
+  <ol class="howto-list"><li>Upload an image.</li><li>Enter exact dimensions or pick a preset, with aspect ratio locked or unlocked.</li><li>Click Resize image and download the result.</li></ol>
+</section>
+
+<section class="section related-section">
+  <h2>Related tools</h2>
+  <div class="related-grid">
+    <a class="tool-card" href="/tools/image-compressor/" style="--cat-color:#db2777">
+    <div class="tool-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-5 5"/></svg></div>
+    <h3>Image Compressor</h3>
+    <p>Compress JPG, PNG and WebP images in your browser to reduce file size, with a live before/after comparison. Images never leave your device.</p>
+    <span class="tool-card-cat">Image Tools</span>
+  </a>
+    <a class="tool-card" href="/tools/image-format-converter/" style="--cat-color:#db2777">
+    <div class="tool-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-5 5"/></svg></div>
+    <h3>Image Format Converter</h3>
+    <p>Convert images between JPG, PNG and WebP formats directly in your browser, based on what your browser can actually encode.</p>
+    <span class="tool-card-cat">Image Tools</span>
+  </a>
+    <a class="tool-card" href="/tools/image-cropper/" style="--cat-color:#db2777">
+    <div class="tool-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-5 5"/></svg></div>
+    <h3>Image Cropper</h3>
+    <p>Crop images to a free-form selection or common aspect ratios like square, 4:3 and 16:9, directly in your browser.</p>
+    <span class="tool-card-cat">Image Tools</span>
+  </a>
+    <a class="tool-card" href="/tools/word-counter/" style="--cat-color:#2563eb">
+    <div class="tool-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M9 5v14m-3 0h6M17 5v6"/></svg></div>
+    <h3>Word Counter</h3>
+    <p>Count words, characters, sentences and paragraphs in real time, plus estimated reading and speaking time.</p>
+    <span class="tool-card-cat">Text Tools</span>
+  </a>
+    <a class="tool-card" href="/tools/character-counter/" style="--cat-color:#2563eb">
+    <div class="tool-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M9 5v14m-3 0h6M17 5v6"/></svg></div>
+    <h3>Character Counter</h3>
+    <p>Count characters, characters without spaces, words and lines instantly — useful for meeting title tags, bios and SMS limits.</p>
+    <span class="tool-card-cat">Text Tools</span>
+  </a>
+    <a class="tool-card" href="/tools/case-converter/" style="--cat-color:#2563eb">
+    <div class="tool-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M9 5v14m-3 0h6M17 5v6"/></svg></div>
+    <h3>Case Converter</h3>
+    <p>Convert text between UPPERCASE, lowercase, Title Case, Sentence case, aLtErNaTiNg case and more with one click.</p>
+    <span class="tool-card-cat">Text Tools</span>
+  </a>
+  </div>
+</section>
+<section class="container reveal">
+<section class="section faq-section">
+  <h2>Frequently asked questions</h2>
+  <details class="faq-item"><summary>Does resizing reduce file size too?</summary><p>Usually yes, since fewer pixels generally means a smaller file, but for precise size control use the Image Compressor after resizing.</p></details>
+</section></section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <a href="/" class="logo" aria-label="Utoline home"><img src="/logo.svg" alt="Utoline" width="136" height="34"></a>
+        <p>Free, fast and privacy-friendly online tools for text, images, developers, PDFs, calculators and more — no signup required.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Popular Tools</h4>
+        <a href="/tools/word-counter/">Word Counter</a>
+        <a href="/tools/character-counter/">Character Counter</a>
+        <a href="/tools/case-converter/">Case Converter</a>
+        <a href="/tools/remove-duplicate-lines/">Remove Duplicate Lines</a>
+        <a href="/tools/text-sorter/">Text Sorter</a>
+        <a href="/tools/text-cleaner/">Text Cleaner</a>
+      </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <a href="/category/text-tools/">Text Tools</a>
+        <a href="/category/image-tools/">Image Tools</a>
+        <a href="/category/pdf-tools/">PDF Tools</a>
+        <a href="/category/developer-tools/">Developer Tools</a>
+        <a href="/category/calculators/">Calculators</a>
+        <a href="/category/converter-tools/">Converter Tools</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacy/">Privacy Policy</a>
+        <a href="/terms/">Terms of Use</a>
+        <a href="/acknowledgements/">Open-source credits</a>
+        <a href="/guides/">Guides</a>
+                <a href="/disclaimer/">Disclaimer</a>
+        <a href="/cookies/">Cookie Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Utoline. All tools run in your browser.</span>
+    </div>
+  </div>
+</footer>
+<script>window.utoline_TOOLS = [{"name":"Word Counter","url":"/tools/word-counter/","category":"text-tools","categoryName":"Text Tools","description":"Count words, characters, sentences and paragraphs in real time, plus estimated reading and speaking time.","keywords":["word counter","character count","reading time","text counter","count words online"]},{"name":"Character Counter","url":"/tools/character-counter/","category":"text-tools","categoryName":"Text Tools","description":"Count characters, characters without spaces, words and lines instantly — useful for meeting title tags, bios and SMS limits.","keywords":["character counter","character count","letter count","count characters"]},{"name":"Case Converter","url":"/tools/case-converter/","category":"text-tools","categoryName":"Text Tools","description":"Convert text between UPPERCASE, lowercase, Title Case, Sentence case, aLtErNaTiNg case and more with one click.","keywords":["case converter","uppercase to lowercase","title case converter","sentence case"]},{"name":"Remove Duplicate Lines","url":"/tools/remove-duplicate-lines/","category":"text-tools","categoryName":"Text Tools","description":"Remove duplicate lines from a list while preserving the first occurrence, with case-sensitivity, trimming and sorting options.","keywords":["remove duplicate lines","unique lines","dedupe text","remove duplicates from list"]},{"name":"Text Sorter","url":"/tools/text-sorter/","category":"text-tools","categoryName":"Text Tools","description":"Sort lines of text alphabetically or numerically, reverse line order, remove duplicates, or shuffle lines randomly.","keywords":["text sorter","sort lines","alphabetical order","randomize lines"]},{"name":"Text Cleaner","url":"/tools/text-cleaner/","category":"text-tools","categoryName":"Text Tools","description":"Clean up messy text: remove extra spaces, blank lines, special characters and normalize line breaks.","keywords":["text cleaner","remove extra spaces","clean text online","remove blank lines"]},{"name":"JSON Formatter & Validator","url":"/tools/json-formatter/","category":"developer-tools","categoryName":"Developer Tools","description":"Format, minify and validate JSON with clear error messages and adjustable indentation.","keywords":["json formatter","json validator","json minifier","json beautifier","pretty print json"]},{"name":"Base64 Encoder / Decoder","url":"/tools/base64-encoder-decoder/","category":"developer-tools","categoryName":"Developer Tools","description":"Encode text to Base64 or decode Base64 back to text, with correct handling of Unicode characters.","keywords":["base64 encode","base64 decode","base64 converter online"]},{"name":"URL Encoder / Decoder","url":"/tools/url-encoder-decoder/","category":"developer-tools","categoryName":"Developer Tools","description":"Percent-encode or decode URLs and query string components.","keywords":["url encoder","url decoder","percent encoding","encodeuricomponent online"]},{"name":"HTML Encoder / Decoder","url":"/tools/html-encoder-decoder/","category":"developer-tools","categoryName":"Developer Tools","description":"Convert text to HTML entities or decode HTML entities back to plain text.","keywords":["html encoder","html entity decoder","escape html online"]},{"name":"UUID Generator","url":"/tools/uuid-generator/","category":"developer-tools","categoryName":"Developer Tools","description":"Generate random UUID v4 values using your browser’s cryptographically secure random number generator.","keywords":["uuid generator","guid generator","random uuid v4"]},{"name":"Timestamp Converter","url":"/tools/timestamp-converter/","category":"developer-tools","categoryName":"Developer Tools","description":"Convert between Unix timestamps and human-readable dates, in both seconds and milliseconds, local time and UTC.","keywords":["unix timestamp converter","epoch converter","timestamp to date"]},{"name":"Regex Tester","url":"/tools/regex-tester/","category":"developer-tools","categoryName":"Developer Tools","description":"Test regular expressions against sample text with live match highlighting and capture groups.","keywords":["regex tester","regular expression tester online","regex match highlighter"]},{"name":"Hash Generator","url":"/tools/hash-generator/","category":"developer-tools","categoryName":"Developer Tools","description":"Generate SHA-1, SHA-256, SHA-384 and SHA-512 hashes of text using your browser’s built-in cryptography.","keywords":["hash generator","sha256 online","sha1 generator","text to hash"]},{"name":"Percentage Calculator","url":"/tools/percentage-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate X% of Y, percentage increase or decrease, and percentage difference between two numbers.","keywords":["percentage calculator","percent of number","percentage increase calculator"]},{"name":"Discount Calculator","url":"/tools/discount-calculator/","category":"calculators","categoryName":"Calculators","description":"Work out the discount amount and final price from an original price and discount percentage.","keywords":["discount calculator","sale price calculator","percent off calculator"]},{"name":"GST / Sales Tax Calculator","url":"/tools/gst-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate GST or sales tax both ways: add tax to a base price, or extract the base price from a tax-inclusive amount, at any rate.","keywords":["gst calculator","sales tax calculator","tax inclusive calculator","add gst calculator"]},{"name":"EMI / Loan Calculator","url":"/tools/emi-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate your monthly loan installment (EMI), total interest and total payment from principal, rate and tenure.","keywords":["emi calculator","loan calculator","monthly installment calculator"]},{"name":"Age Calculator","url":"/tools/age-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate exact age in years, months and days between a date of birth and any target date, plus days until next birthday.","keywords":["age calculator","calculate age from date of birth","how old am i"]},{"name":"BMI Calculator","url":"/tools/bmi-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate Body Mass Index from height and weight in metric or imperial units, with the standard BMI category.","keywords":["bmi calculator","body mass index calculator","bmi metric imperial"]},{"name":"Tip Calculator","url":"/tools/tip-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate the tip amount, total bill, and per-person split for any bill amount, tip percentage and group size.","keywords":["tip calculator","bill splitter","gratuity calculator"]},{"name":"Percentage Change Calculator","url":"/tools/percentage-change-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate the percentage increase or decrease between an old value and a new value.","keywords":["percentage change calculator","percent increase or decrease"]},{"name":"Average Calculator","url":"/tools/average-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate the mean, median, mode and range of a list of numbers.","keywords":["average calculator","mean median mode calculator"]},{"name":"Ratio Calculator","url":"/tools/ratio-calculator/","category":"calculators","categoryName":"Calculators","description":"Simplify ratios to their lowest terms, or scale a ratio to match a target value.","keywords":["ratio calculator","simplify ratio","ratio to fraction"]},{"name":"Time Duration Calculator","url":"/tools/time-duration-calculator/","category":"calculators","categoryName":"Calculators","description":"Calculate the duration between two times, or add/subtract hours and minutes from a time.","keywords":["time duration calculator","hours between two times","time difference calculator"]},{"name":"Length Converter","url":"/tools/length-converter/","category":"converter-tools","categoryName":"Converter Tools","description":"Convert between millimeters, centimeters, meters, kilometers, inches, feet, yards and miles.","keywords":["length converter","cm to inches","meters to feet","unit converter length"]},{"name":"Weight Converter","url":"/tools/weight-converter/","category":"converter-tools","categoryName":"Converter Tools","description":"Convert between milligrams, grams, kilograms, ounces, pounds, stone and metric tons.","keywords":["weight converter","kg to lbs","grams to ounces","mass converter"]},{"name":"Temperature Converter","url":"/tools/temperature-converter/","category":"converter-tools","categoryName":"Converter Tools","description":"Convert between Celsius, Fahrenheit and Kelvin instantly.","keywords":["temperature converter","celsius to fahrenheit","fahrenheit to celsius","kelvin converter"]},{"name":"Area Converter","url":"/tools/area-converter/","category":"converter-tools","categoryName":"Converter Tools","description":"Convert between square meters, square feet, acres, hectares and more.","keywords":["area converter","square feet to square meters","acres to hectares"]},{"name":"Volume Converter","url":"/tools/volume-converter/","category":"converter-tools","categoryName":"Converter Tools","description":"Convert between milliliters, liters, cubic meters, cups, gallons and more.","keywords":["volume converter","liters to gallons","ml to cups","cubic meters converter"]},{"name":"Speed Converter","url":"/tools/speed-converter/","category":"converter-tools","categoryName":"Converter Tools","description":"Convert between meters/second, km/h, mph, knots and feet/second.","keywords":["speed converter","kph to mph","knots to mph","mps converter"]},{"name":"Data Storage Converter","url":"/tools/data-storage-converter/","category":"converter-tools","categoryName":"Converter Tools","description":"Convert between bits, bytes, kilobytes, megabytes, gigabytes and terabytes — with correct decimal (1000) vs binary (1024) distinctions.","keywords":["data storage converter","kb to mb","gb to mb","bytes converter"]},{"name":"Date Difference Calculator","url":"/tools/date-difference-calculator/","category":"datetime-tools","categoryName":"Date & Time Tools","description":"Calculate the exact number of days, weeks, months and years between two dates.","keywords":["date difference calculator","days between dates","date calculator"]},{"name":"Add / Subtract Days from Date","url":"/tools/add-subtract-days/","category":"datetime-tools","categoryName":"Date & Time Tools","description":"Add or subtract a number of days, weeks or months from a date to find the resulting date.","keywords":["add days to date","subtract days from date","date calculator add"]},{"name":"Countdown Calculator","url":"/tools/countdown-calculator/","category":"datetime-tools","categoryName":"Date & Time Tools","description":"See exactly how much time is left until any future date and time, updated live.","keywords":["countdown calculator","days until date","time until countdown"]},{"name":"Time Zone Converter","url":"/tools/timezone-converter/","category":"datetime-tools","categoryName":"Date & Time Tools","description":"Convert a date and time from your local time zone to any other major time zone.","keywords":["timezone converter","time zone conversion","convert time between timezones"]},{"name":"Meta Tag Generator","url":"/tools/meta-tag-generator/","category":"seo-tools","categoryName":"SEO Tools","description":"Generate HTML meta tags for title, description, keywords, canonical URL and robots directives.","keywords":["meta tag generator","html meta tags","seo meta tags generator"]},{"name":"Open Graph Meta Generator","url":"/tools/open-graph-generator/","category":"seo-tools","categoryName":"SEO Tools","description":"Generate Open Graph and Twitter/X meta tags for rich social media link previews.","keywords":["open graph generator","og meta tags","twitter card generator","social share tags"]},{"name":"Robots.txt Generator","url":"/tools/robots-txt-generator/","category":"seo-tools","categoryName":"SEO Tools","description":"Generate a valid robots.txt file to control which search engine crawlers can access your site.","keywords":["robots.txt generator","create robots.txt","disallow crawler"]},{"name":"Sitemap Generator","url":"/tools/sitemap-generator/","category":"seo-tools","categoryName":"SEO Tools","description":"Generate a valid XML sitemap from a list of URLs you provide.","keywords":["sitemap generator","xml sitemap creator","sitemap.xml generator"]},{"name":"SERP Snippet Preview","url":"/tools/serp-snippet-preview/","category":"seo-tools","categoryName":"SEO Tools","description":"Preview how your page title and description might appear as a search result snippet, on desktop and mobile widths.","keywords":["serp preview","google snippet preview tool","search result preview"]},{"name":"Password Generator","url":"/tools/password-generator/","category":"security-tools","categoryName":"Security & Privacy Tools","description":"Generate strong, random passwords using your browser’s cryptographically secure random number generator. Nothing is stored or transmitted.","keywords":["password generator","strong password generator","random password generator"]},{"name":"Password Strength Checker","url":"/tools/password-strength-checker/","category":"security-tools","categoryName":"Security & Privacy Tools","description":"Check how strong a password is, entirely on your device — the password is never transmitted or stored.","keywords":["password strength checker","check password strength online","password security test"]},{"name":"Random String Generator","url":"/tools/random-string-generator/","category":"security-tools","categoryName":"Security & Privacy Tools","description":"Generate random alphanumeric strings for tokens, test data or unique identifiers.","keywords":["random string generator","random token generator","random alphanumeric generator"]},{"name":"QR Code Generator","url":"/tools/qr-code-generator/","category":"misc-tools","categoryName":"Miscellaneous Tools","description":"Generate a scannable QR code from a URL, plain text, email address or phone number, and download it as a PNG.","keywords":["qr code generator","create qr code online","qr code for url"]},{"name":"Lorem Ipsum Generator","url":"/tools/lorem-ipsum-generator/","category":"misc-tools","categoryName":"Miscellaneous Tools","description":"Generate placeholder Lorem Ipsum text by paragraphs, sentences or words for use in mockups and designs.","keywords":["lorem ipsum generator","placeholder text generator","dummy text generator"]},{"name":"Random Number Generator","url":"/tools/random-number-generator/","category":"misc-tools","categoryName":"Miscellaneous Tools","description":"Generate one or more random numbers within a custom range, with optional duplicate exclusion.","keywords":["random number generator","random number between two numbers","number picker"]},{"name":"Color Converter & Picker","url":"/tools/color-converter/","category":"misc-tools","categoryName":"Miscellaneous Tools","description":"Convert colors between HEX, RGB and HSL, or pick a color visually with a live preview.","keywords":["color converter","hex to rgb","rgb to hsl","color picker online"]},{"name":"Text to Slug Generator","url":"/tools/text-to-slug/","category":"misc-tools","categoryName":"Miscellaneous Tools","description":"Convert any text into a clean, URL-friendly slug for blog posts, product pages or file names.","keywords":["text to slug","slug generator","url slug converter","seo friendly url generator"]},{"name":"Microphone Test","url":"/tools/microphone-test/","category":"misc-tools","categoryName":"Miscellaneous Tools","description":"Test your microphone online with a live waveform and sound-level meter. Audio stays in your browser and is never recorded, stored or uploaded.","keywords":["microphone test","mic test","test my microphone","check microphone online","audio input test","sound level meter"]},{"name":"Image Compressor","url":"/tools/image-compressor/","category":"image-tools","categoryName":"Image Tools","description":"Compress JPG, PNG and WebP images in your browser to reduce file size, with a live before/after comparison. Images never leave your device.","keywords":["image compressor","compress jpg online","reduce image file size","compress png"]},{"name":"Image Resizer","url":"/tools/image-resizer/","category":"image-tools","categoryName":"Image Tools","description":"Resize images to exact dimensions or common presets, with optional aspect-ratio lock, entirely in your browser.","keywords":["image resizer","resize image online","resize photo dimensions"]},{"name":"Image Cropper","url":"/tools/image-cropper/","category":"image-tools","categoryName":"Image Tools","description":"Crop images to a free-form selection or common aspect ratios like square, 4:3 and 16:9, directly in your browser.","keywords":["image cropper","crop photo online","crop image to square"]},{"name":"Image Format Converter","url":"/tools/image-format-converter/","category":"image-tools","categoryName":"Image Tools","description":"Convert images between JPG, PNG and WebP formats directly in your browser, based on what your browser can actually encode.","keywords":["image format converter","jpg to png","png to jpg","convert to webp"]},{"name":"PDF Merge","url":"/tools/pdf-merge/","category":"pdf-tools","categoryName":"PDF Tools","description":"Combine multiple PDF files into a single document, in the order you choose, directly in your browser.","keywords":["merge pdf","combine pdf files","pdf merger online"]},{"name":"PDF Split & Page Extractor","url":"/tools/pdf-split/","category":"pdf-tools","categoryName":"PDF Tools","description":"Extract specific pages or page ranges from a PDF into a new document, directly in your browser.","keywords":["split pdf","extract pages from pdf","pdf page extractor"]},{"name":"PDF Rotate","url":"/tools/pdf-rotate/","category":"pdf-tools","categoryName":"PDF Tools","description":"Rotate all or selected pages of a PDF by 90, 180 or 270 degrees, directly in your browser.","keywords":["rotate pdf","pdf rotate pages online","fix pdf orientation"]}];</script>
+<script src="/assets/js/main.js"></script>
+<script>
+      (function(){
+        let img = null, ratio = 1, originalType = 'image/jpeg';
+        const drop = document.getElementById('ir-drop');
+        const fileInput = document.getElementById('ir-file');
+        const errBox = document.getElementById('ir-error');
+        drop.addEventListener('click', () => fileInput.click());
+        drop.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') fileInput.click(); });
+        ['dragover','dragenter'].forEach(evt => drop.addEventListener(evt, e => { e.preventDefault(); drop.classList.add('dragover'); }));
+        ['dragleave','drop'].forEach(evt => drop.addEventListener(evt, e => { e.preventDefault(); drop.classList.remove('dragover'); }));
+        drop.addEventListener('drop', e => { if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+        fileInput.addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+        function loadFile(file){
+          errBox.hidden = true;
+          if (!/^image\/(jpeg|png|webp)$/.test(file.type)){ errBox.hidden=false; errBox.textContent='Please choose a JPG, PNG or WebP image.'; return; }
+          originalType = file.type;
+          const reader = new FileReader();
+          reader.onload = function(e){
+            img = new Image();
+            img.onload = function(){
+              ratio = img.width / img.height;
+              document.getElementById('ir-width').value = img.width;
+              document.getElementById('ir-height').value = img.height;
+              document.getElementById('ir-controls').hidden = false;
+              document.getElementById('ir-download-row').hidden = true;
+            };
+            img.onerror = function(){ errBox.hidden=false; errBox.textContent='This image could not be read.'; };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+        const widthInput = document.getElementById('ir-width');
+        const heightInput = document.getElementById('ir-height');
+        widthInput.addEventListener('input', function(){
+          if (document.getElementById('ir-lock').checked && ratio) heightInput.value = Math.round(this.value / ratio);
+        });
+        heightInput.addEventListener('input', function(){
+          if (document.getElementById('ir-lock').checked && ratio) widthInput.value = Math.round(this.value * ratio);
+        });
+        document.getElementById('ir-preset').addEventListener('change', function(){
+          if (!this.value) return;
+          const [w,h] = this.value.split('x').map(Number);
+          widthInput.value = w; heightInput.value = h;
+        });
+        const qSlider = document.getElementById('ir-quality');
+        qSlider.addEventListener('input', () => document.getElementById('ir-quality-value').textContent = qSlider.value);
+        document.getElementById('ir-run').addEventListener('click', function(){
+          if (!img){ errBox.hidden=false; errBox.textContent='Please choose a file first.'; return; }
+          const w = parseInt(widthInput.value,10), h = parseInt(heightInput.value,10);
+          if (!w || !h || w<=0 || h<=0){ errBox.hidden=false; errBox.textContent='Enter a valid width and height.'; return; }
+          errBox.hidden = true;
+          withLoading(this, 'Resizing…', function(){
+            return new Promise(function(resolve){
+              const canvas = document.getElementById('ir-canvas');
+              canvas.width = w; canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, w, h);
+              const quality = parseInt(qSlider.value,10)/100;
+              canvas.toBlob(function(blob){
+                canvas.dataset.blobUrl = URL.createObjectURL(blob);
+                document.getElementById('ir-download-row').hidden = false;
+                resolve();
+              }, originalType, quality);
+            });
+          });
+        });
+        document.getElementById('ir-download').addEventListener('click', function(){
+          const canvas = document.getElementById('ir-canvas');
+          const url = canvas.dataset.blobUrl;
+          if (!url) return;
+          const ext = originalType === 'image/png' ? 'png' : (originalType === 'image/webp' ? 'webp' : 'jpg');
+          const a = document.createElement('a'); a.href = url; a.download = 'resized.' + ext; a.click();
+        });
+        document.getElementById('ir-reset').addEventListener('click', function(){
+          img = null; fileInput.value='';
+          document.getElementById('ir-controls').hidden = true;
+          const canvas = document.getElementById('ir-canvas');
+          canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+        });
+      })();</script><script src="/assets/js/tool-completion.js"></script>
+</body>
+</html>
