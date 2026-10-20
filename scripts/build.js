@@ -103,6 +103,7 @@ ${CONFIG.siteUrl ? `<meta property="og:url" content="${canonical}">` : ''}
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/style.css">
 <script src="/assets/js/config.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7649325847673531" crossorigin="anonymous"></script>
 ${jsonLd}
 ${extraHead || ''}`;
 }
