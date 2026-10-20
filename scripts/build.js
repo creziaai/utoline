@@ -170,8 +170,6 @@ function footerHtml(){
         <a href="/contact/">Contact</a>
         <a href="/privacy/">Privacy Policy</a>
         <a href="/terms/">Terms of Use</a>
-        <a href="/acknowledgements/">Open-source credits</a>
-        <a href="/guides/">Guides</a>
                 <a href="/disclaimer/">Disclaimer</a>
         <a href="/cookies/">Cookie Policy</a>
       </div>
@@ -482,7 +480,7 @@ function buildToolPages(){
   <section class="tool-completion" data-tool-completion hidden aria-live="polite" aria-atomic="true" data-state="ready">
     <div class="tool-completion-heading"><span class="tool-completion-mark" aria-hidden="true">✓</span><h2 data-completion-status>Operation Completed Successfully</h2></div>
     <p data-completion-message></p><div class="tool-completion-result" data-completion-result></div><p class="tool-completion-conclusion" data-completion-conclusion></p>
-    <div class="toolbar toolbar-wrap" data-completion-actions hidden><button class="btn btn-primary" type="button" data-completion-copy>Copy result</button><button class="btn btn-ghost" type="button" data-completion-again>Run again</button></div>
+    <div class="toolbar toolbar-wrap" data-completion-actions hidden><button class="btn btn-primary" type="button" data-completion-copy>Copy result</button></div>
   </section>
 </section>
 ${adSlot('incontent')}
@@ -503,7 +501,7 @@ ${relatedToolsBlock(t.related, t.slug)}
       description: t.description,
       canonicalPath: t.url,
       bodyHtml, structuredData,
-      bodyAttrs: `data-tool-slug="${t.slug}"`,
+      bodyAttrs: `data-tool-slug="${t.slug}" data-tool-category="${t.category}"`,
       extraFooterScripts: (externalLibTag(t) ? externalLibTag(t) + '\n' : '') + '<script>' + t.script + '</script><script src="/assets/js/tool-completion.js"></script>'
     }));
     registerPage(t.url, '0.9', 'monthly');

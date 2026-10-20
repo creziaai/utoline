@@ -221,6 +221,7 @@ module.exports = [
           if (sort) result.sort((a,b) => a.localeCompare(b));
           output.value = result.join('\\n');
           document.getElementById('rdl-count').textContent = lines.length + ' lines in → ' + result.length + ' unique lines out.';
+          document.querySelector('.tool-panel').dispatchEvent(new CustomEvent('utoline:operation', {detail:{state:'success', message:'Duplicate lines have been removed.', result:output.value || 'No lines to display.'}}));
         }
         document.getElementById('rdl-run').addEventListener('click', run);
         document.getElementById('rdl-reset').addEventListener('click', function(){ input.value=''; output.value=''; document.getElementById('rdl-count').textContent=''; });
@@ -277,6 +278,7 @@ module.exports = [
               case 'unique': arr = [...new Set(arr)]; break;
             }
             input.value = arr.join('\\n');
+            document.querySelector('.tool-panel').dispatchEvent(new CustomEvent('utoline:operation', {detail:{state:'success', message:'Your list was processed successfully.', result:input.value || 'The list is empty.'}}));
           });
         });
         document.getElementById('ts-reset').addEventListener('click', function(){ input.value=''; input.focus(); });
@@ -330,6 +332,7 @@ module.exports = [
           if (document.getElementById('tc-special').checked) text = text.replace(/[^\\p{L}\\p{N}\\s.,!?'"-]/gu, '');
           if (document.getElementById('tc-punct').checked) text = text.replace(/[.,!?;:'"()\\[\\]{}]/g, '');
           output.value = text;
+          document.querySelector('.tool-panel').dispatchEvent(new CustomEvent('utoline:operation', {detail:{state:'success', message:'Your text has been cleaned.', result:output.value || 'No text to display.'}}));
         }
         document.getElementById('tc-run').addEventListener('click', run);
         document.getElementById('tc-reset').addEventListener('click', function(){ input.value=''; output.value=''; });

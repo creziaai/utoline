@@ -281,12 +281,22 @@ module.exports = [
       </div>`,
     script: `
       (function(){
+        const targetInput = document.getElementById('age-target');
+        function localToday(){
+          const now = new Date();
+          const y = now.getFullYear();
+          const m = String(now.getMonth() + 1).padStart(2, '0');
+          const d = String(now.getDate()).padStart(2, '0');
+          return y + '-' + m + '-' + d;
+        }
+        targetInput.value = localToday();
         document.getElementById('age-today').addEventListener('click', function(){
-          document.getElementById('age-target').value = new Date().toISOString().slice(0,10);
+          targetInput.value = localToday();
+          targetInput.dispatchEvent(new Event('change', { bubbles: true }));
         });
         document.getElementById('age-run').addEventListener('click', function(){
           const dobVal = document.getElementById('age-dob').value;
-          const targetVal = document.getElementById('age-target').value || new Date().toISOString().slice(0,10);
+          const targetVal = targetInput.value || localToday();
           const errBox = document.getElementById('age-error');
           if (!dobVal){ errBox.hidden=false; errBox.textContent='Enter a date of birth.'; document.getElementById('age-result').hidden=true; return; }
           const dob = new Date(dobVal + 'T00:00:00');
@@ -306,6 +316,7 @@ module.exports = [
           document.getElementById('age-days').textContent = totalDays.toLocaleString();
           document.getElementById('age-next').textContent = daysToNext + ' day' + (daysToNext===1?'':'s');
           document.getElementById('age-result').hidden = false;
+          document.querySelector('.tool-panel').dispatchEvent(new CustomEvent('utoline:operation', {detail:{state:'success', message:'Age calculated for the selected target date.', result:'Age: ' + document.getElementById('age-ymd').textContent + '; Total days lived: ' + document.getElementById('age-days').textContent + '; Next birthday in: ' + document.getElementById('age-next').textContent}}));
         });
         document.getElementById('age-reset').addEventListener('click', function(){
           document.getElementById('age-dob').value=''; document.getElementById('age-target').value='';

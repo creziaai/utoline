@@ -2,6 +2,9 @@
    produced after the user's action; clicking alone never counts as completion. */
 (function () {
   'use strict';
+  const category = document.body.dataset.toolCategory || '';
+  // These categories use direct, task-specific feedback rather than a generic completion dialog.
+  if (category === 'security-tools' || category === 'misc-tools' || category === 'image-tools' || category === 'calculators') return;
   const panel = document.querySelector('.tool-panel');
   const card = document.querySelector('[data-tool-completion]');
   if (!panel || !card) return;
@@ -205,11 +208,6 @@
       else throw new Error('Clipboard access is unavailable in this browser context.');
       message.textContent = 'Result copied successfully.';
     } catch (e) { show('error', e.message || 'Copy failed. Select the result text and copy it manually.'); }
-  });
-  card.querySelector('[data-completion-again]')?.addEventListener('click', function () {
-    clearCompletion(); settled = true;
-    const first = panel.querySelector('textarea,input:not([type="file"]),select');
-    if (first) first.focus();
   });
   clearCompletion();
 })();

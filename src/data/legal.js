@@ -44,8 +44,6 @@ module.exports = {
       <p>Every tool on Utoline is designed to do one job well: text utilities, developer tools, calculators, converters, image tools, PDF utilities, SEO helpers, security tools and more. You can see the full list on the <a href="/tools/">All Tools</a> page.</p>
       <h2>Our approach to privacy</h2>
       <p>Wherever technically possible, Utoline processes your input directly in your browser using JavaScript — your text, images, passwords and documents are not uploaded to a server. Where a tool does need to load an external library (for example, to draw a QR code or manipulate a PDF), that library still runs locally in your browser; your content itself is not sent anywhere.</p>
-      <h2>How this site is funded</h2>
-      <p>Utoline is free to use. Development and hosting costs may eventually be supported by unobtrusive, clearly labeled advertising, which is disabled by default and never mixed in with tool controls.</p>
       <h2>Feedback</h2>
       <p>Found a bug, or want to suggest a tool? Get in touch via our <a href="/contact/">Contact page</a>.</p>
     `
@@ -64,7 +62,6 @@ module.exports = {
     title: 'Privacy Policy',
     description: 'Read Utoline’s Privacy Policy covering local processing, analytics, cookies and advertising.',
     body: `
-      <p><em>Last updated: 10 October 2026. This is a template and does not constitute legal advice — have it reviewed by a qualified professional before publishing, and replace bracketed placeholders with your actual business details.</em></p>
       <h2>Local, browser-based processing</h2>
       <p>Most tools on this site process your input — text, images, passwords, documents — entirely within your web browser using JavaScript. This content is not uploaded to our servers or any third party in the course of normal tool use, except where a tool explicitly states it loads an external code library (in which case only the library code, not your content, is fetched from that library’s host).</p>
       <h2>Analytics</h2>
@@ -76,14 +73,13 @@ module.exports = {
       <h2>Data we do not collect</h2>
       <p>We do not require account registration for any tool, and we do not ask for or intentionally collect passwords, private documents, or other sensitive personal content you enter into our tools — those are processed locally in your browser as described above.</p>
       <h2>Contact</h2>
-      <p>Before publication, add the real business or support contact for privacy questions.</p>
+      <p><a href="mailto:creziaai@gmail.com">creziaai@gmail.com</a></p>
     `
   },
   terms: {
     title: 'Terms of Service',
     description: 'Terms of Service for using Utoline’s free online tools.',
     body: `
-      <p><em>This is a template and does not constitute legal advice — have it reviewed by a qualified professional before publishing.</em></p>
       <h2>Use of the service</h2>
       <p>Utoline provides free online tools "as is" for personal and business use. You may use these tools without creating an account. You agree not to use the tools for any unlawful purpose or in a way that could damage, disable or impair the service.</p>
       <h2>No warranty</h2>
@@ -94,8 +90,6 @@ module.exports = {
       <p>We may modify, suspend or discontinue any tool or feature at any time.</p>
       <h2>Governing law</h2>
       <p>These terms are governed by the laws of India.</p>
-      <h2>Contact</h2>
-      <p>Before publication, add the real business or support contact for questions about these terms.</p>
     `
   },
   disclaimer: {

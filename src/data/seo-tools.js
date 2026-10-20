@@ -118,6 +118,7 @@ module.exports = [
           if (desc) lines.push('<meta name="twitter:description" content="'+esc(desc)+'">');
           if (image) lines.push('<meta name="twitter:image" content="'+esc(image)+'">');
           document.getElementById('og-output').value = lines.join('\\n');
+          document.querySelector('.tool-panel').dispatchEvent(new CustomEvent('utoline:operation', {detail:{state:'success', message:'Open Graph and social preview tags are ready.', result:document.getElementById('og-output').value}}));
         });
         document.getElementById('og-reset').addEventListener('click', function(){
           ['og-title','og-desc','og-url','og-image','og-site'].forEach(id => document.getElementById(id).value='');
