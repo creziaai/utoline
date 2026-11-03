@@ -620,6 +620,7 @@ function build(){
   if (fs.existsSync(DIST)) fs.rmSync(DIST, { recursive: true, force: true });
     fs.mkdirSync(DIST, { recursive: true });
   fs.copyFileSync(path.join(ROOT, 'scripts/ads.txt'), path.join(DIST, 'ads.txt'));
+fs.copyFileSync(path.join(ROOT, 'scripts/sw.js'), path.join(DIST, 'sw.js'));
 
   copyDir(path.join(SRC, 'assets/css'), path.join(DIST, 'assets/css'));
   fs.mkdirSync(path.join(DIST, 'assets/js'), { recursive: true });
