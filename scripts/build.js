@@ -1,9 +1,4 @@
 #!/usr/bin/env node
-/**
- * utoline static site generator.
- * Zero npm dependencies — uses only Node's built-in fs/path modules.
- * Run with: node scripts/build.js
- */
 const fs = require('fs');
 const path = require('path');
 
@@ -11,11 +6,10 @@ const ROOT = path.join(__dirname, '..');
 const SRC = path.join(ROOT, 'src');
 const DIST = path.join(ROOT, 'dist');
 
-// ---------- Config (from environment, with safe defaults) ----------
 const CONFIG = {
   siteName: 'Utoline',
-  siteUrl: (process.env.NEXT_PUBLIC_SITE_URL || '').trim().replace(/\/$/, ''),
-  gaId: process.env.NEXT_PUBLIC_GA_ID || '',
+  siteUrl: (process.env.NEXT_PUBLIC_SITE_URL || 'https://utoline.us.ci').trim().replace(/\/$/, ''),
+  gaId: process.env.NEXT_PUBLIC_GA_ID || 'G-65N9C2ZPWN',
   adsenseEnabled: process.env.NEXT_PUBLIC_ADSENSE_ENABLED === 'true',
   adsensePublisherId: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || '',
   adsenseSlotTop: process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOP || '',
@@ -24,38 +18,65 @@ const CONFIG = {
   adsenseSlotBottom: process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || '',
 };
 
-// ---------- Load data ----------
 const categories = require(path.join(SRC, 'data/categories.js'));
-const toolFiles = [
-  'text-tools.js', 'developer-tools.js', 'calculators.js', 'calculators-more.js',
-  'converter-tools.js', 'datetime-tools.js', 'seo-tools.js', 'security-tools.js',
-  'misc-tools.js', 'audio-tools.js', 'image-tools.js', 'pdf-tools.js'
-];
-let tools = [];
-toolFiles.forEach(f => { tools = tools.concat(require(path.join(SRC, 'data', f))); });
 
-// Validate uniqueness of slugs
+const toolFiles = [
+  'text-tools.js',
+  'developer-tools.js',
+  'calculators.js',
+  'calculators-more.js',
+  'converter-tools.js',
+  'datetime-tools.js',
+  'seo-tools.js',
+  'security-tools.js',
+  'misc-tools.js',
+  'audio-tools.js',
+  'image-tools.js',
+  'pdf-tools.js'
+];
+
+let tools = [];
+
+toolFiles.forEach(f => {
+  tools = tools.concat(require(path.join(SRC, 'data', f)));
+});
+
 const seenSlugs = new Set();
+
 tools.forEach(t => {
-  if (seenSlugs.has(t.slug)) throw new Error('Duplicate tool slug: ' + t.slug);
+  if (seenSlugs.has(t.slug)) {
+    throw new Error('Duplicate tool slug: ' + t.slug);
+  }
+
   seenSlugs.add(t.slug);
-  if (!categories.find(c => c.slug === t.category)) throw new Error('Unknown category "' + t.category + '" on tool ' + t.slug);
+
+  if (!categories.find(c => c.slug === t.category)) {
+    throw new Error('Unknown category "' + t.category + '" on tool ' + t.slug);
+  }
 });
 
 const guides = require(path.join(SRC, 'data/guides.js'));
 const legal = require(path.join(SRC, 'data/legal.js'));
 
-// Enrich tools with computed fields
-const catBySlug = Object.fromEntries(categories.map(c => [c.slug, c]));
+const catBySlug = Object.fromEntries(
+  categories.map(c => [c.slug, c])
+);
+
 tools.forEach(t => {
   t.url = '/tools/' + t.slug + '/';
   t.categoryName = catBySlug[t.category].name;
   t.categoryUrl = '/category/' + t.category + '/';
 });
-const toolsBySlug = Object.fromEntries(tools.map(t => [t.slug, t]));
-categories.forEach(c => { c.tools = tools.filter(t => t.category === c.slug); c.url = '/category/' + c.slug + '/'; });
 
-// ---------- Icons (small inline SVGs, original/simple shapes — no third-party IP) ----------
+const toolsBySlug = Object.fromEntries(
+  tools.map(t => [t.slug, t])
+);
+
+categories.forEach(c => {
+  c.tools = tools.filter(t => t.category === c.slug);
+  c.url = '/category/' + c.slug + '/';
+});
+
 const ICONS = {
   type: '<path d="M4 5h16M9 5v14m-3 0h6M17 5v6"/>',
   image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-4 4-3-3-5 5"/>',
@@ -68,19 +89,43 @@ const ICONS = {
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
   grid: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>',
 };
-function icon(name, size){
-  return '<svg width="'+(size||20)+'" height="'+(size||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||ICONS.grid)+'</svg>';
+
+function icon(name, size) {
+  return '<svg width="' + (size || 20) + '" height="' + (size || 20) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS.grid) + '</svg>';
 }
 
-// ---------- HTML helpers ----------
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
-function absUrl(p){ return CONFIG.siteUrl ? CONFIG.siteUrl.replace(/\/$/,'') + p : p; }
+function absUrl(p) {
+  return CONFIG.siteUrl
+    ? CONFIG.siteUrl.replace(/\/$/, '') + p
+    : p;
+}
 
-function head({ title, description, canonicalPath, structuredData, extraHead, robots = 'index, follow' }){
-  const fullTitle = title.includes(CONFIG.siteName) ? title : title + ' | ' + CONFIG.siteName;
+function head({
+  title,
+  description,
+  canonicalPath,
+  structuredData,
+  extraHead,
+  robots = 'index, follow'
+}) {
+  const fullTitle = title.includes(CONFIG.siteName)
+    ? title
+    : title + ' | ' + CONFIG.siteName;
+
   const canonical = absUrl(canonicalPath);
-  const jsonLd = (structuredData || []).map(d => '<script type="application/ld+json">'+JSON.stringify(d)+'</script>').join('\n');
+
+  const jsonLd = (structuredData || [])
+    .map(d => '<script type="application/ld+json">' + JSON.stringify(d) + '</script>')
+    .join('\n');
+
   return `<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(fullTitle)}</title>
@@ -104,21 +149,28 @@ ${CONFIG.siteUrl ? `<meta property="og:url" content="${canonical}">` : ''}
 <link rel="stylesheet" href="/assets/css/style.css">
 <script src="/assets/js/config.js"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7649325847673531" crossorigin="anonymous"></script>
+
+<script>(function(s){s.dataset.zone='12181996',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 ${jsonLd}
 ${extraHead || ''}`;
 }
 
-function headerHtml(){
+function headerHtml() {
   const navLinks = [
-    ['/tools/', 'Tools'], ['/categories/', 'Categories'], ['/guides/', 'Guides'], ['/about/', 'About'], ['/contact/', 'Contact']
+    ['/tools/', 'Tools'],
+    ['/categories/', 'Categories'],
+    ['/guides/', 'Guides'],
+    ['/about/', 'About'],
+    ['/contact/', 'Contact']
   ];
+
   return `
 <a href="#main-content" class="skip-link">Skip to content</a>
 <header class="site-header">
   <div class="container">
     <a href="/" class="logo" aria-label="Utoline home"><img src="/logo.svg" alt="Utoline" width="136" height="34"></a>
     <nav class="main-nav" aria-label="Primary">
-      ${navLinks.map(([href,label]) => `<a href="${href}">${label}</a>`).join('\n      ')}
+      ${navLinks.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n      ')}
     </nav>
     <div class="header-actions">
       <button class="nav-search-trigger" data-search-trigger type="button" aria-label="Search tools"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span>Search tools…</span><kbd>⌘K</kbd></button>
@@ -131,7 +183,7 @@ function headerHtml(){
   <div class="mobile-nav-panel">
     <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close menu">×</button>
     <nav aria-label="Mobile">
-      ${navLinks.map(([href,label]) => `<a href="${href}">${label}</a>`).join('\n      ')}
+      ${navLinks.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n      ')}
     </nav>
   </div>
 </div>
@@ -147,8 +199,9 @@ function headerHtml(){
 </div>`;
 }
 
-function footerHtml(){
+function footerHtml() {
   const popular = tools.slice(0, 6);
+
   return `
 <footer class="site-footer">
   <div class="container">
@@ -163,7 +216,7 @@ function footerHtml(){
       </div>
       <div class="footer-col">
         <h4>Categories</h4>
-        ${categories.slice(0,6).map(c => `<a href="${c.url}">${esc(c.name)}</a>`).join('\n        ')}
+        ${categories.slice(0, 6).map(c => `<a href="${c.url}">${esc(c.name)}</a>`).join('\n        ')}
       </div>
       <div class="footer-col">
         <h4>Company</h4>
@@ -171,7 +224,7 @@ function footerHtml(){
         <a href="/contact/">Contact</a>
         <a href="/privacy/">Privacy Policy</a>
         <a href="/terms/">Terms of Use</a>
-                <a href="/disclaimer/">Disclaimer</a>
+        <a href="/disclaimer/">Disclaimer</a>
         <a href="/cookies/">Cookie Policy</a>
       </div>
     </div>
@@ -182,13 +235,20 @@ function footerHtml(){
 </footer>`;
 }
 
-function adSlot(kind){
-  // Renders an empty, clearly-labeled container. No ad code is injected unless
-  // NEXT_PUBLIC_ADSENSE_ENABLED=true and publisher/slot IDs are configured.
+function adSlot(kind) {
   if (!CONFIG.adsenseEnabled || !CONFIG.adsensePublisherId) return '';
-  const slotMap = { top: CONFIG.adsenseSlotTop, incontent: CONFIG.adsenseSlotInContent, sidebar: CONFIG.adsenseSlotSidebar, bottom: CONFIG.adsenseSlotBottom };
+
+  const slotMap = {
+    top: CONFIG.adsenseSlotTop,
+    incontent: CONFIG.adsenseSlotInContent,
+    sidebar: CONFIG.adsenseSlotSidebar,
+    bottom: CONFIG.adsenseSlotBottom
+  };
+
   const slot = slotMap[kind];
+
   if (!slot) return '';
+
   return `
 <div class="ad-slot ad-slot-${kind}">
   <div class="ad-slot-label">Advertisement</div>
@@ -196,23 +256,54 @@ function adSlot(kind){
 </div>`;
 }
 
-function toolsIndexScript(){
-  const minimal = tools.map(t => ({ name: t.name, url: t.url, category: t.category, categoryName: t.categoryName, description: t.description, keywords: t.keywords || [] }));
+function toolsIndexScript() {
+  const minimal = tools.map(t => ({
+    name: t.name,
+    url: t.url,
+    category: t.category,
+    categoryName: t.categoryName,
+    description: t.description,
+    keywords: t.keywords || []
+  }));
+
   return 'window.utoline_TOOLS = ' + JSON.stringify(minimal) + ';';
 }
 
-function externalLibTag(tool){
+function externalLibTag(tool) {
   if (!tool.usesExternalLib) return '';
-  if (tool.usesExternalLib === 'pdf-lib') return '<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>';
-  if (tool.usesExternalLib === 'qrcode') return '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>';
+
+  if (tool.usesExternalLib === 'pdf-lib') {
+    return '<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>';
+  }
+
+  if (tool.usesExternalLib === 'qrcode') {
+    return '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>';
+  }
+
   return '';
 }
 
-function layout({ title, description, canonicalPath, bodyHtml, structuredData, bodyAttrs, extraHead, extraFooterScripts }){
+function layout({
+  title,
+  description,
+  canonicalPath,
+  bodyHtml,
+  structuredData,
+  bodyAttrs,
+  extraHead,
+  extraFooterScripts
+}) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-${head({ title, description, canonicalPath, structuredData, extraHead, robots: canonicalPath === '/404.html' ? 'noindex' : 'index, follow' })}
+${head({
+  title,
+  description,
+  canonicalPath,
+  structuredData,
+  extraHead,
+  robots: canonicalPath === '/404.html' ? 'noindex' : 'index, follow'
+})}
 </head>
 <body ${bodyAttrs || ''}>
 ${headerHtml()}
@@ -227,8 +318,9 @@ ${extraFooterScripts || ''}
 </html>`;
 }
 
-function faqBlock(faq){
+function faqBlock(faq) {
   if (!faq || !faq.length) return '';
+
   return `
 <section class="section faq-section">
   <h2>Frequently asked questions</h2>
@@ -236,34 +328,66 @@ function faqBlock(faq){
 </section>`;
 }
 
-function faqSchema(faq, url){
+function faqSchema(faq, url) {
   if (!faq || !faq.length) return null;
+
   return {
-    '@context': 'https://schema.org', '@type': 'FAQPage',
-    mainEntity: faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g,'') } }))
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(f => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.a.replace(/<[^>]+>/g, '')
+      }
+    }))
   };
 }
 
-function breadcrumbSchema(items){
+function breadcrumbSchema(items) {
   return {
-    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
-    itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i+1, name: it.name, item: absUrl(it.url) }))
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: absUrl(it.url)
+    }))
   };
 }
 
-function relatedToolsBlock(relatedSlugs, currentSlug){
-  const selected = (relatedSlugs || []).map(s => toolsBySlug[s]).filter(t => t && t.slug !== currentSlug);
+function relatedToolsBlock(relatedSlugs, currentSlug) {
+  const selected = (relatedSlugs || [])
+    .map(s => toolsBySlug[s])
+    .filter(t => t && t.slug !== currentSlug);
+
   const current = toolsBySlug[currentSlug];
+
   if (current && selected.length < 4) {
-    const fallback = tools.filter(t => t.slug !== currentSlug && t.category === current.category && !selected.some(x => x.slug === t.slug));
+    const fallback = tools.filter(t =>
+      t.slug !== currentSlug &&
+      t.category === current.category &&
+      !selected.some(x => x.slug === t.slug)
+    );
+
     selected.push(...fallback);
   }
+
   if (current && selected.length < 4) {
-    const fallback = tools.filter(t => t.slug !== currentSlug && !selected.some(x => x.slug === t.slug));
+    const fallback = tools.filter(t =>
+      t.slug !== currentSlug &&
+      !selected.some(x => x.slug === t.slug)
+    );
+
     selected.push(...fallback);
   }
-  const related = selected.slice(0,6);
+
+  const related = selected.slice(0, 6);
+
   if (!related.length) return '';
+
   return `
 <section class="section related-section">
   <h2>Related tools</h2>
@@ -273,8 +397,9 @@ function relatedToolsBlock(relatedSlugs, currentSlug){
 </section>`;
 }
 
-function toolCardHtml(t){
+function toolCardHtml(t) {
   const cat = catBySlug[t.category];
+
   return `<a class="tool-card" href="${t.url}" style="--cat-color:${cat.color}">
     <div class="tool-card-icon">${icon(cat.icon, 20)}</div>
     <h3>${esc(t.name)}</h3>
@@ -283,46 +408,57 @@ function toolCardHtml(t){
   </a>`;
 }
 
-function categoryCardHtml(c){
+function categoryCardHtml(c) {
   return `<a class="category-card" href="${c.url}" style="--cat-color:${c.color}">
     <div class="category-card-icon">${icon(c.icon, 24)}</div>
     <h3>${esc(c.name)}</h3>
     <p>${esc(c.description)}</p>
-    <span class="count">${c.tools.length} tool${c.tools.length===1?'':'s'}</span>
+    <span class="count">${c.tools.length} tool${c.tools.length === 1 ? '' : 's'}</span>
   </a>`;
 }
 
-function breadcrumbHtml(items){
+function breadcrumbHtml(items) {
   return `<nav class="breadcrumb" aria-label="Breadcrumb">
-    ${items.map((it, i) => i === items.length-1 ? `<span>${esc(it.name)}</span>` : `<a href="${it.url}">${esc(it.name)}</a> / `).join('')}
+    ${items.map((it, i) =>
+      i === items.length - 1
+        ? `<span>${esc(it.name)}</span>`
+        : `<a href="${it.url}">${esc(it.name)}</a> / `
+    ).join('')}
   </nav>`;
 }
 
-// ---------- File writing helpers ----------
-function writeFile(relPath, content){
+function writeFile(relPath, content) {
   const full = path.join(DIST, relPath);
+
   fs.mkdirSync(path.dirname(full), { recursive: true });
   fs.writeFileSync(full, content, 'utf8');
 }
-function copyDir(src, dest){
+
+function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
-  for (const entry of fs.readdirSync(src, { withFileTypes: true })){
-    const s = path.join(src, entry.name), d = path.join(dest, entry.name);
-    if (entry.isDirectory()) copyDir(s, d);
-    else fs.copyFileSync(s, d);
+
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const s = path.join(src, entry.name);
+    const d = path.join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      copyDir(s, d);
+    } else {
+      fs.copyFileSync(s, d);
+    }
   }
 }
 
-// ---------- Page builders ----------
-const allPages = []; // for sitemap: { url, priority, changefreq }
+const allPages = [];
 
-function registerPage(url, priority, changefreq){
+function registerPage(url, priority, changefreq) {
   allPages.push({ url, priority, changefreq });
 }
 
-function buildHomepage(){
+function buildHomepage() {
   const popular = tools.slice(0, 8);
   const recent = tools.slice(-8).reverse();
+
   const bodyHtml = `
 <section class="hero container">
   <span class="hero-badge"><span class="dot"></span> ${tools.length} free tools · no signup · runs in your browser</span>
@@ -376,76 +512,121 @@ ${adSlot('incontent')}
 
 <section class="section container reveal">
   <div class="section-head"><h2>Helpful Guides</h2><a href="/guides/">View all guides →</a></div>
-  <div class="guide-grid">${guides.slice(0,4).map(g => `<a class="guide-card" href="/guides/${g.slug}/" style="display:block;"><h3>${esc(g.title)}</h3><p>${esc(g.description)}</p></a>`).join('\n')}</div>
+  <div class="guide-grid">${guides.slice(0, 4).map(g => `<a class="guide-card" href="/guides/${g.slug}/" style="display:block;"><h3>${esc(g.title)}</h3><p>${esc(g.description)}</p></a>`).join('\n')}</div>
 </section>
 
 <section class="section container reveal">
   ${faqBlock([
-    { q: 'Are these tools really free?', a: 'Yes — every tool on utoline is free to use, with no account, signup or hidden paywall.' },
-    { q: 'Is my data uploaded when I use a tool?', a: 'Most tools process your input entirely in your browser using JavaScript, so it is never uploaded to a server. Tools that work differently say so clearly on their page.' },
-    { q: 'Do I need to install anything?', a: 'No. Every tool runs directly in your web browser on desktop or mobile.' }
+    {
+      q: 'Are these tools really free?',
+      a: 'Yes — every tool on utoline is free to use, with no account, signup or hidden paywall.'
+    },
+    {
+      q: 'Is my data uploaded when I use a tool?',
+      a: 'Most tools process your input entirely in your browser using JavaScript, so it is never uploaded to a server. Tools that work differently say so clearly on their page.'
+    },
+    {
+      q: 'Do I need to install anything?',
+      a: 'No. Every tool runs directly in your web browser on desktop or mobile.'
+    }
   ])}
 </section>
 `;
+
   const structuredData = [
-    { '@context': 'https://schema.org', '@type': 'WebSite', name: CONFIG.siteName, ...(CONFIG.siteUrl ? { url: CONFIG.siteUrl, potentialAction: { '@type': 'SearchAction', target: absUrl('/tools/') + '?q={search_term_string}', 'query-input': 'required name=search_term_string' } } : {}) },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: CONFIG.siteName,
+      ...(CONFIG.siteUrl ? {
+        url: CONFIG.siteUrl,
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: absUrl('/tools/') + '?q={search_term_string}',
+          'query-input': 'required name=search_term_string'
+        }
+      } : {})
+    },
     faqSchema([
-      { q: 'Are these tools really free?', a: 'Yes — every tool on utoline is free to use, with no account, signup or hidden paywall.' },
-      { q: 'Is my data uploaded when I use a tool?', a: 'Most tools process your input entirely in your browser using JavaScript, so it is never uploaded to a server.' }
+      {
+        q: 'Are these tools really free?',
+        a: 'Yes — every tool on utoline is free to use, with no account, signup or hidden paywall.'
+      },
+      {
+        q: 'Is my data uploaded when I use a tool?',
+        a: 'Most tools process your input entirely in your browser using JavaScript, so it is never uploaded to a server.'
+      }
     ])
   ];
+
   writeFile('index.html', layout({
     title: 'utoline — Free Online Tools for Everyday Tasks',
     description: 'Fast, simple and privacy-friendly free online tools for text, images, developers, PDFs, calculators and more. No signup required.',
     canonicalPath: '/',
-    bodyHtml, structuredData
+    bodyHtml,
+    structuredData
   }));
+
   registerPage('/', '1.0', 'weekly');
 }
 
-function buildToolsIndex(){
+function buildToolsIndex() {
   const bodyHtml = `
 <section class="container tool-page-header">
-  ${breadcrumbHtml([{name:'Home',url:'/'},{name:'All Tools',url:'/tools/'}])}
+  ${breadcrumbHtml([
+    { name: 'Home', url: '/' },
+    { name: 'All Tools', url: '/tools/' }
+  ])}
   <h1>All Tools</h1>
   <p class="tool-lede">Browse every free tool on utoline — ${tools.length} tools across ${categories.length} categories.</p>
 </section>
 <section class="section container">
   <div class="tool-grid">${tools.map(toolCardHtml).join('\n')}</div>
 </section>`;
+
   writeFile('tools/index.html', layout({
     title: 'All Free Online Tools',
     description: 'Browse the full directory of ' + tools.length + ' free online tools for text, images, developers, PDFs, calculators, converters and more.',
     canonicalPath: '/tools/',
     bodyHtml
   }));
+
   registerPage('/tools/', '0.9', 'weekly');
 }
 
-function buildCategoriesIndex(){
+function buildCategoriesIndex() {
   const bodyHtml = `
 <section class="container tool-page-header">
-  ${breadcrumbHtml([{name:'Home',url:'/'},{name:'Categories',url:'/categories/'}])}
+  ${breadcrumbHtml([
+    { name: 'Home', url: '/' },
+    { name: 'Categories', url: '/categories/' }
+  ])}
   <h1>Tool Categories</h1>
   <p class="tool-lede">Explore tools grouped by category.</p>
 </section>
 <section class="section container">
   <div class="category-grid">${categories.map(categoryCardHtml).join('\n')}</div>
 </section>`;
+
   writeFile('categories/index.html', layout({
     title: 'Tool Categories',
     description: 'Browse all utoline tool categories: text, image, PDF, developer, calculators, converters, SEO, security, date & time and more.',
     canonicalPath: '/categories/',
     bodyHtml
   }));
+
   registerPage('/categories/', '0.8', 'monthly');
 }
 
-function buildCategoryPages(){
+function buildCategoryPages() {
   categories.forEach(c => {
     const bodyHtml = `
 <section class="container tool-page-header" style="--cat-color:${c.color}">
-  ${breadcrumbHtml([{name:'Home',url:'/'},{name:'Categories',url:'/categories/'},{name:c.name,url:c.url}])}
+  ${breadcrumbHtml([
+    { name: 'Home', url: '/' },
+    { name: 'Categories', url: '/categories/' },
+    { name: c.name, url: c.url }
+  ])}
   <span class="cat-pill">${icon(c.icon, 14)} ${esc(c.name)}</span>
   <h1>${esc(c.name)}</h1>
   <p class="tool-lede">${esc(c.description)}</p>
@@ -454,21 +635,37 @@ ${adSlot('top')}
 <section class="section container reveal">
   <div class="tool-grid">${c.tools.map(toolCardHtml).join('\n')}</div>
 </section>`;
-    const structuredData = [breadcrumbSchema([{name:'Home',url:'/'},{name:'Categories',url:'/categories/'},{name:c.name,url:c.url}])];
+
+    const structuredData = [
+      breadcrumbSchema([
+        { name: 'Home', url: '/' },
+        { name: 'Categories', url: '/categories/' },
+        { name: c.name, url: c.url }
+      ])
+    ];
+
     writeFile('category/' + c.slug + '/index.html', layout({
       title: c.name + ' — Free Online Tools',
       description: c.description + ' ' + c.tools.length + ' free tools available, no signup required.',
       canonicalPath: c.url,
-      bodyHtml, structuredData
+      bodyHtml,
+      structuredData
     }));
+
     registerPage(c.url, '0.8', 'weekly');
   });
 }
 
-function buildToolPages(){
+function buildToolPages() {
   tools.forEach(t => {
     const cat = catBySlug[t.category];
-    const breadcrumbItems = [{name:'Home',url:'/'},{name:cat.name,url:cat.url},{name:t.name,url:t.url}];
+
+    const breadcrumbItems = [
+      { name: 'Home', url: '/' },
+      { name: cat.name, url: cat.url },
+      { name: t.name, url: t.url }
+    ];
+
     const bodyHtml = `
 <section class="container tool-page-header" style="--cat-color:${cat.color}">
   ${breadcrumbHtml(breadcrumbItems)}
@@ -487,51 +684,83 @@ function buildToolPages(){
 ${adSlot('incontent')}
 <section class="section container prose reveal">
   <h2>How to use ${esc(t.name)}</h2>
-  <ol class="howto-list">${(t.howTo||[]).map(step => `<li>${step}</li>`).join('')}</ol>
+  <ol class="howto-list">${(t.howTo || []).map(step => `<li>${step}</li>`).join('')}</ol>
 </section>
 ${relatedToolsBlock(t.related, t.slug)}
 <section class="container reveal">${faqBlock(t.faq)}</section>
 `;
+
     const structuredData = [
       breadcrumbSchema(breadcrumbItems),
-      { '@context': 'https://schema.org', '@type': 'WebApplication', name: t.name, description: t.description, url: absUrl(t.url), applicationCategory: 'UtilityApplication', operatingSystem: 'Any (runs in web browser)', offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: t.name,
+        description: t.description,
+        url: absUrl(t.url),
+        applicationCategory: 'UtilityApplication',
+        operatingSystem: 'Any (runs in web browser)',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD'
+        }
+      },
       faqSchema(t.faq, t.url)
     ].filter(Boolean);
+
     writeFile('tools/' + t.slug + '/index.html', layout({
       title: t.name + ' — Free Online Tool',
       description: t.description,
       canonicalPath: t.url,
-      bodyHtml, structuredData,
+      bodyHtml,
+      structuredData,
       bodyAttrs: `data-tool-slug="${t.slug}" data-tool-category="${t.category}"`,
-      extraFooterScripts: (externalLibTag(t) ? externalLibTag(t) + '\n' : '') + '<script>' + t.script + '</script><script src="/assets/js/tool-completion.js"></script>'
+      extraFooterScripts:
+        (externalLibTag(t) ? externalLibTag(t) + '\n' : '') +
+        '<script>' + t.script + '</script><script src="/assets/js/tool-completion.js"></script>'
     }));
+
     registerPage(t.url, '0.9', 'monthly');
   });
 }
 
-function buildGuidesIndex(){
+function buildGuidesIndex() {
   const bodyHtml = `
 <section class="container tool-page-header">
-  ${breadcrumbHtml([{name:'Home',url:'/'},{name:'Guides',url:'/guides/'}])}
+  ${breadcrumbHtml([
+    { name: 'Home', url: '/' },
+    { name: 'Guides', url: '/guides/' }
+  ])}
   <h1>Guides</h1>
   <p class="tool-lede">Practical, plain-English explainers to go along with our tools.</p>
 </section>
 <section class="section container">
   <div class="guide-grid">${guides.map(g => `<a class="guide-card" href="/guides/${g.slug}/" style="display:block;"><h3>${esc(g.title)}</h3><p>${esc(g.description)}</p></a>`).join('\n')}</div>
 </section>`;
+
   writeFile('guides/index.html', layout({
     title: 'Guides & How-Tos',
     description: 'Plain-English guides on JSON, image compression, percentages, Unix timestamps, QR codes and more.',
     canonicalPath: '/guides/',
     bodyHtml
   }));
+
   registerPage('/guides/', '0.7', 'monthly');
 }
 
-function buildGuidePages(){
+function buildGuidePages() {
   guides.forEach(g => {
-    const breadcrumbItems = [{name:'Home',url:'/'},{name:'Guides',url:'/guides/'},{name:g.title,url:'/guides/'+g.slug+'/'}];
-    const relatedTools = (g.related || []).map(s => toolsBySlug[s]).filter(Boolean);
+    const breadcrumbItems = [
+      { name: 'Home', url: '/' },
+      { name: 'Guides', url: '/guides/' },
+      { name: g.title, url: '/guides/' + g.slug + '/' }
+    ];
+
+    const relatedTools = (g.related || [])
+      .map(s => toolsBySlug[s])
+      .filter(Boolean);
+
     const bodyHtml = `
 <section class="container tool-page-header">
   ${breadcrumbHtml(breadcrumbItems)}
@@ -539,6 +768,7 @@ function buildGuidePages(){
 </section>
 <section class="section container prose">${g.body}</section>
 ${relatedTools.length ? `<section class="section container"><h2>Related tools</h2><div class="related-grid">${relatedTools.map(toolCardHtml).join('')}</div></section>` : ''}`;
+
     writeFile('guides/' + g.slug + '/index.html', layout({
       title: g.title,
       description: g.description,
@@ -546,27 +776,33 @@ ${relatedTools.length ? `<section class="section container"><h2>Related tools</h
       bodyHtml,
       structuredData: [breadcrumbSchema(breadcrumbItems)]
     }));
+
     registerPage('/guides/' + g.slug + '/', '0.6', 'yearly');
   });
 }
 
-function buildStaticPage(slug, content, priority){
+function buildStaticPage(slug, content, priority) {
   const bodyHtml = `
 <section class="container tool-page-header">
-  ${breadcrumbHtml([{name:'Home',url:'/'},{name:content.title,url:'/'+slug+'/'}])}
+  ${breadcrumbHtml([
+    { name: 'Home', url: '/' },
+    { name: content.title, url: '/' + slug + '/' }
+  ])}
   <h1>${esc(content.title)}</h1>
 </section>
 <section class="section container prose">${content.body}</section>`;
+
   writeFile(slug + '/index.html', layout({
     title: content.title,
     description: content.description,
     canonicalPath: '/' + slug + '/',
     bodyHtml
   }));
+
   registerPage('/' + slug + '/', priority || '0.5', 'yearly');
 }
 
-function build404(){
+function build404() {
   const bodyHtml = `
 <section class="container error-page">
   <div class="code">404</div>
@@ -575,6 +811,7 @@ function build404(){
   <a class="btn btn-primary" href="/">Go to homepage</a>
   <a class="btn btn-ghost" href="/tools/">Browse all tools</a>
 </section>`;
+
   writeFile('404.html', layout({
     title: 'Page Not Found',
     description: 'The page you are looking for could not be found.',
@@ -583,49 +820,97 @@ function build404(){
   }));
 }
 
-function buildSitemap(){
-  const today = new Date().toISOString().slice(0,10);
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${CONFIG.siteUrl ? allPages.map(p => `  <url>\n    <loc>${absUrl(p.url)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>`).join('\n') : ''}\n</urlset>`;
+function buildSitemap() {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${CONFIG.siteUrl ? allPages.map(p => `  <url>
+    <loc>${absUrl(p.url)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
+  </url>`).join('\n') : ''}
+</urlset>`;
+
   writeFile('sitemap.xml', xml);
 }
 
-function buildRobots(){
+function buildRobots() {
   const txt = `User-agent: *
 Allow: /
 
 Sitemap: ${absUrl('/sitemap.xml')}
 `;
+
   writeFile('robots.txt', txt);
 }
 
-function buildFavicon(){
+function buildFavicon() {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#29265f"/><path d="M7 7v11a9 9 0 0 0 18 0V7" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/><path d="M12 7v11a4 4 0 0 0 8 0V7" fill="none" stroke="#a9a5ff" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+
   writeFile('favicon.svg', svg);
-  fs.copyFileSync(path.join(SRC, 'assets/logo.svg'), path.join(DIST, 'logo.svg'));
-  writeFile('og-image.svg', `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#f7f7fc"/><circle cx="1010" cy="80" r="280" fill="#e8e7ff"/><circle cx="1100" cy="600" r="260" fill="#e2f5f1"/><rect x="90" y="130" width="88" height="88" rx="24" fill="#29265f"/><path d="M112 151v29a22 22 0 0 0 44 0v-29" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/><path d="M125 151v29a9 9 0 0 0 18 0v-29" fill="none" stroke="#a9a5ff" stroke-width="4" stroke-linecap="round"/><text x="200" y="195" font-family="Arial,sans-serif" font-size="62" font-weight="700" fill="#17172c">utoline</text><text x="90" y="330" font-family="Arial,sans-serif" font-size="54" font-weight="700" fill="#17172c">Useful Tools. One Online Destination.</text><text x="90" y="398" font-family="Arial,sans-serif" font-size="30" fill="#565a6e">Text · Images · PDFs · Calculators · Developer tools</text><text x="90" y="520" font-family="Arial,sans-serif" font-size="24" fill="#4f46e5">utoline</text></svg>`);
+
+  fs.copyFileSync(
+    path.join(SRC, 'assets/logo.svg'),
+    path.join(DIST, 'logo.svg')
+  );
+
+  writeFile(
+    'og-image.svg',
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#f7f7fc"/><circle cx="1010" cy="80" r="280" fill="#e8e7ff"/><circle cx="1100" cy="600" r="260" fill="#e2f5f1"/><rect x="90" y="130" width="88" height="88" rx="24" fill="#29265f"/><path d="M112 151v29a22 22 0 0 0 44 0v-29" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/><path d="M125 151v29a9 9 0 0 0 18 0v-29" fill="none" stroke="#a9a5ff" stroke-width="4" stroke-linecap="round"/><text x="200" y="195" font-family="Arial,sans-serif" font-size="62" font-weight="700" fill="#17172c">utoline</text><text x="90" y="330" font-family="Arial,sans-serif" font-size="54" font-weight="700" fill="#17172c">Useful Tools. One Online Destination.</text><text x="90" y="398" font-family="Arial,sans-serif" font-size="30" fill="#565a6e">Text · Images · PDFs · Calculators · Developer tools</text><text x="90" y="520" font-family="Arial,sans-serif" font-size="24" fill="#4f46e5">utoline</text></svg>`
+  );
 }
 
-function buildConfigJs(){
-  const template = fs.readFileSync(path.join(SRC, 'assets/js/config.template.js'), 'utf8');
+function buildConfigJs() {
+  const template = fs.readFileSync(
+    path.join(SRC, 'assets/js/config.template.js'),
+    'utf8'
+  );
+
   const out = template
     .replace('__GA_ID__', CONFIG.gaId)
     .replace('__ADSENSE_ENABLED__', CONFIG.adsenseEnabled ? 'true' : 'false')
     .replace('__ADSENSE_PUBLISHER_ID__', CONFIG.adsensePublisherId)
     .replace('__SITE_URL__', CONFIG.siteUrl);
+
   writeFile('assets/js/config.js', out);
 }
 
-// ---------- Run build ----------
-function build(){
-  if (fs.existsSync(DIST)) fs.rmSync(DIST, { recursive: true, force: true });
-    fs.mkdirSync(DIST, { recursive: true });
-  fs.copyFileSync(path.join(ROOT, 'scripts/ads.txt'), path.join(DIST, 'ads.txt'));
-fs.copyFileSync(path.join(ROOT, 'scripts/sw.js'), path.join(DIST, 'sw.js'));
+function build() {
+  if (fs.existsSync(DIST)) {
+    fs.rmSync(DIST, { recursive: true, force: true });
+  }
 
-  copyDir(path.join(SRC, 'assets/css'), path.join(DIST, 'assets/css'));
+  fs.mkdirSync(DIST, { recursive: true });
+
+  fs.copyFileSync(
+    path.join(ROOT, 'scripts/ads.txt'),
+    path.join(DIST, 'ads.txt')
+  );
+
+  fs.copyFileSync(
+    path.join(ROOT, 'scripts/sw.js'),
+    path.join(DIST, 'sw.js')
+  );
+
+  copyDir(
+    path.join(SRC, 'assets/css'),
+    path.join(DIST, 'assets/css')
+  );
+
   fs.mkdirSync(path.join(DIST, 'assets/js'), { recursive: true });
-  fs.copyFileSync(path.join(SRC, 'assets/js/main.js'), path.join(DIST, 'assets/js/main.js'));
-  fs.copyFileSync(path.join(SRC, 'assets/js/tool-completion.js'), path.join(DIST, 'assets/js/tool-completion.js'));
+
+  fs.copyFileSync(
+    path.join(SRC, 'assets/js/main.js'),
+    path.join(DIST, 'assets/js/main.js')
+  );
+
+  fs.copyFileSync(
+    path.join(SRC, 'assets/js/tool-completion.js'),
+    path.join(DIST, 'assets/js/tool-completion.js')
+  );
+
   buildConfigJs();
   buildFavicon();
 
@@ -636,6 +921,7 @@ fs.copyFileSync(path.join(ROOT, 'scripts/sw.js'), path.join(DIST, 'sw.js'));
   buildToolPages();
   buildGuidesIndex();
   buildGuidePages();
+
   buildStaticPage('about', legal.about, '0.5');
   buildStaticPage('contact', legal.contact, '0.5');
   buildStaticPage('privacy', legal.privacy, '0.3');
@@ -643,6 +929,7 @@ fs.copyFileSync(path.join(ROOT, 'scripts/sw.js'), path.join(DIST, 'sw.js'));
   buildStaticPage('acknowledgements', legal.acknowledgements, '0.2');
   buildStaticPage('disclaimer', legal.disclaimer, '0.3');
   buildStaticPage('cookies', legal.cookies, '0.3');
+
   build404();
   buildSitemap();
   buildRobots();
@@ -655,4 +942,3 @@ fs.copyFileSync(path.join(ROOT, 'scripts/sw.js'), path.join(DIST, 'sw.js'));
 }
 
 build();
-
