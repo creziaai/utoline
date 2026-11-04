@@ -3,100 +3,113 @@ module.exports = [
     slug: 'qr-code-generator',
     name: 'QR Code Generator',
     category: 'misc-tools',
-    description: 'Generate a scannable QR code from a URL, plain text, email address or phone number, and download it as a PNG.',
-    keywords: ['qr code generator', 'create qr code online', 'qr code for url'],
+    description: 'Create custom QR codes for links, text, email, phone, Wi-Fi, WhatsApp, SMS and contact cards. Customize colors, add a logo and download as PNG.',
+    keywords: ['qr code generator', 'create qr code online', 'custom qr code', 'wifi qr code', 'whatsapp qr code'],
     related: ['color-converter', 'text-to-slug', 'random-string-generator'],
     usesExternalLib: 'qrcode',
     html: `
-      <div class="tool-panel">
-        <p class="hint">This tool loads a small, widely used open-source QR rendering library so it can draw a real, scannable code. Your input is encoded locally in your browser — it is not uploaded anywhere.</p>
-        <div class="tab-group" role="tablist">
-          <button class="tab active" data-type="text" role="tab" aria-selected="true">URL / Text</button>
-          <button class="tab" data-type="email" role="tab" aria-selected="false">Email</button>
-          <button class="tab" data-type="phone" role="tab" aria-selected="false">Phone</button>
-        </div>
-        <label class="field-label" for="qr-input">Content</label>
-        <input id="qr-input" class="input" type="text" placeholder="https://example.com">
+      <div class="tool-panel qr-tool">
+        <p class="hint">Create a scannable QR code in your browser. Your content stays on your device and is not uploaded.</p>
         <div class="grid-2">
-          <div><label class="field-label" for="qr-size">Size (px)</label>
-            <select id="qr-size" class="select"><option>200</option><option selected>300</option><option>400</option><option>600</option></select>
+          <div><label class="field-label" for="qr-type">QR code type</label>
+            <select id="qr-type" class="select">
+              <option value="url">URL / Text</option><option value="email">Email</option><option value="phone">Phone</option>
+              <option value="wifi">Wi-Fi</option><option value="whatsapp">WhatsApp</option><option value="sms">SMS</option><option value="contact">Contact card</option>
+            </select>
           </div>
-          <div><label class="field-label" for="qr-ecc">Error correction</label>
-            <select id="qr-ecc" class="select"><option value="L">Low (L)</option><option value="M" selected>Medium (M)</option><option value="Q">Quartile (Q)</option><option value="H">High (H)</option></select>
+          <div><label class="field-label" for="qr-size">Output size</label>
+            <select id="qr-size" class="select"><option value="256">256 × 256</option><option value="300" selected>300 × 300</option><option value="400">400 × 400</option><option value="600">600 × 600</option><option value="800">800 × 800</option></select>
           </div>
         </div>
-        <div class="toolbar">
-          <button class="btn btn-primary" id="qr-run" type="button">Generate QR code</button>
-          <button class="btn btn-ghost" id="qr-reset" type="button">Reset</button>
+        <div id="qr-fields" class="grid-2"></div>
+        <div class="grid-2">
+          <div><label class="field-label" for="qr-dark">QR color</label><input id="qr-dark" class="input" type="color" value="#111827" style="height:44px;padding:5px"></div>
+          <div><label class="field-label" for="qr-light">Background color</label><input id="qr-light" class="input" type="color" value="#ffffff" style="height:44px;padding:5px"></div>
         </div>
+        <div class="grid-2">
+          <div><label class="field-label" for="qr-ecc">Error correction</label><select id="qr-ecc" class="select"><option value="L">Low (L)</option><option value="M">Medium (M)</option><option value="Q">Quartile (Q)</option><option value="H" selected>High (H) — recommended for logos</option></select></div>
+          <div><label class="field-label" for="qr-logo">Center logo (optional)</label><input id="qr-logo" class="input" type="file" accept="image/png,image/jpeg,image/webp"></div>
+        </div>
+        <div class="toolbar"><button class="btn btn-primary" id="qr-run" type="button">Generate QR code</button><button class="btn btn-ghost" id="qr-reset" type="button">Reset</button></div>
         <div id="qr-error" class="alert alert-error" role="alert" hidden></div>
-        <div id="qr-canvas-wrap" class="qr-canvas-wrap"></div>
-        <div class="toolbar" id="qr-download-row" hidden>
-          <button class="btn btn-ghost" id="qr-download" type="button">Download PNG</button>
-        </div>
+        <div id="qr-canvas-wrap" class="qr-canvas-wrap" style="display:flex;justify-content:center;align-items:center;padding:16px;overflow:auto"></div>
+        <div class="toolbar" id="qr-download-row" hidden><button class="btn btn-ghost" id="qr-download" type="button">Download PNG</button></div>
       </div>`,
     script: `
       (function(){
-        let type = 'text';
-        document.querySelectorAll('.tab-group .tab').forEach(t => t.addEventListener('click', function(){
-          document.querySelectorAll('.tab-group .tab').forEach(x=>{x.classList.remove('active'); x.setAttribute('aria-selected','false');});
-          this.classList.add('active'); this.setAttribute('aria-selected','true');
-          type = this.dataset.type;
-          const input = document.getElementById('qr-input');
-          input.placeholder = type === 'email' ? 'name@example.com' : type === 'phone' ? '+1 555 123 4567' : 'https://example.com';
-        }));
-        document.getElementById('qr-run').addEventListener('click', function(){
-          const errBox = document.getElementById('qr-error');
-          const wrap = document.getElementById('qr-canvas-wrap');
-          const raw = document.getElementById('qr-input').value.trim();
-          if (!raw){ errBox.hidden=false; errBox.textContent='Enter some content first.'; wrap.innerHTML=''; document.getElementById('qr-download-row').hidden = true; return; }
-          withLoading(this, 'Generating…', function(){
-            return new Promise(function(resolve){
-              setTimeout(function(){
-                if (typeof QRCode === 'undefined'){
-                  errBox.hidden = false;
-                  errBox.textContent = 'The QR rendering library could not load (this usually means no internet connection). Please check your connection and try again.';
-                  resolve(); return;
-                }
-                errBox.hidden = true;
-                let content = raw;
-                if (type === 'email') content = 'mailto:' + raw;
-                if (type === 'phone') content = 'tel:' + raw;
-                wrap.innerHTML = '';
-                const size = parseInt(document.getElementById('qr-size').value, 10);
-                const ecc = document.getElementById('qr-ecc').value;
-                try {
-                  new QRCode(wrap, { text: content, width: size, height: size, correctLevel: QRCode.CorrectLevel[ecc] });
-                  document.getElementById('qr-download-row').hidden = false;
-                } catch(e){
-                  errBox.hidden = false; errBox.textContent = 'Could not generate a QR code for that input: ' + e.message;
-                }
-                resolve();
-              }, 150);
-            });
+        const typeEl = document.getElementById('qr-type');
+        const fields = document.getElementById('qr-fields');
+        const wrap = document.getElementById('qr-canvas-wrap');
+        const err = document.getElementById('qr-error');
+        const downloadRow = document.getElementById('qr-download-row');
+        let logoData = '';
+        const fieldSets = {
+          url: [['content','URL or text','https://example.com','text']],
+          email: [['to','Email address','name@example.com','email'],['subject','Subject','Hello','text'],['body','Message','Write your message','textarea']],
+          phone: [['phone','Phone number','+1 555 123 4567','tel']],
+          wifi: [['ssid','Network name (SSID)','My Wi-Fi','text'],['password','Wi-Fi password','Password','text'],['security','Security','WPA','select']],
+          whatsapp: [['phone','WhatsApp number with country code','+15551234567','tel'],['message','Message (optional)','Hello!','textarea']],
+          sms: [['phone','Phone number','+1 555 123 4567','tel'],['message','SMS message','Write your message','textarea']],
+          contact: [['name','Full name','Jane Doe','text'],['phone','Phone number','+1 555 123 4567','tel'],['email','Email address','jane@example.com','email'],['org','Organization (optional)','Company','text']]
+        };
+        function renderFields(){
+          fields.innerHTML = '';
+          (fieldSets[typeEl.value] || fieldSets.url).forEach(([id,label,placeholder,kind])=>{
+            const box=document.createElement('div');
+            const lab=document.createElement('label'); lab.className='field-label'; lab.htmlFor='qr-'+id; lab.textContent=label;
+            let input;
+            if(kind==='textarea'){input=document.createElement('textarea');input.rows=2;input.className='textarea';}
+            else if(kind==='select'){input=document.createElement('select');input.className='select';[['WPA','WPA/WPA2'],['WEP','WEP'],['nopass','No password']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;input.appendChild(o);});}
+            else {input=document.createElement('input');input.type=kind;input.className='input';input.placeholder=placeholder;}
+            input.id='qr-'+id; input.autocomplete='off'; box.append(lab,input); fields.appendChild(box);
           });
+        }
+        typeEl.addEventListener('change',renderFields); renderFields();
+        document.getElementById('qr-logo').addEventListener('change',function(){
+          logoData=''; const file=this.files&&this.files[0]; if(!file)return;
+          if(file.size>2*1024*1024){err.hidden=false;err.textContent='Please choose a logo smaller than 2 MB.';this.value='';return;}
+          const reader=new FileReader();reader.onload=()=>{logoData=String(reader.result||'');};reader.onerror=()=>{err.hidden=false;err.textContent='Could not read the selected logo.';};reader.readAsDataURL(file);
         });
-        document.getElementById('qr-reset').addEventListener('click', function(){
-          document.getElementById('qr-input').value = '';
-          document.getElementById('qr-canvas-wrap').innerHTML = '';
-          document.getElementById('qr-download-row').hidden = true;
-          document.getElementById('qr-error').hidden = true;
+        function value(id){const el=document.getElementById('qr-'+id);return el?el.value.trim():'';}
+        function makePayload(){
+          const type=typeEl.value;
+          if(type==='url')return value('content');
+          if(type==='email'){const to=value('to');if(!to)return '';return 'mailto:'+to+'?subject='+encodeURIComponent(value('subject'))+'&body='+encodeURIComponent(value('body'));}
+          if(type==='phone')return value('phone')?'tel:'+value('phone'):'';
+          if(type==='wifi'){const ssid=value('ssid');if(!ssid)return '';const sec=value('security');return 'WIFI:T:'+sec+';S:'+ssid.replace(/[\\;,:"]/g,'\\$&')+';P:'+value('password').replace(/[\\;,:"]/g,'\\$&')+';;';}
+          if(type==='whatsapp'){const phone=value('phone').replace(/[^0-9]/g,'');if(!phone)return '';return 'https://wa.me/'+phone+(value('message')?'?text='+encodeURIComponent(value('message')):'');}
+          if(type==='sms'){const phone=value('phone');if(!phone)return '';return 'SMSTO:'+phone+':'+value('message');}
+          if(type==='contact'){const name=value('name');if(!name)return '';return 'BEGIN:VCARD\\nVERSION:3.0\\nFN:'+name+'\\n'+(value('phone')?'TEL;TYPE=CELL:'+value('phone')+'\\n':'')+(value('email')?'EMAIL:'+value('email')+'\\n':'')+(value('org')?'ORG:'+value('org')+'\\n':'')+'END:VCARD';}
+          return '';
+        }
+        function drawLogo(canvas){
+          if(!logoData||!canvas)return Promise.resolve();
+          return new Promise(resolve=>{const img=new Image();img.onload=()=>{const ctx=canvas.getContext('2d');const size=canvas.width*.20;const x=(canvas.width-size)/2,y=(canvas.height-size)/2;const pad=size*.16;ctx.fillStyle=value('light')||document.getElementById('qr-light').value;ctx.fillRect(x-pad,y-pad,size+pad*2,size+pad*2);ctx.drawImage(img,x,y,size,size);resolve();};img.onerror=resolve;img.src=logoData;});
+        }
+        document.getElementById('qr-run').addEventListener('click',function(){
+          const payload=makePayload();
+          if(!payload){err.hidden=false;err.textContent='Please complete the required field(s) first.';wrap.innerHTML='';downloadRow.hidden=true;return;}
+          withLoading(this,'Generating…',function(){return new Promise(resolve=>setTimeout(async()=>{
+            if(typeof QRCode==='undefined'){err.hidden=false;err.textContent='QR library could not load. Check your internet connection and try again.';resolve();return;}
+            err.hidden=true;wrap.innerHTML='';downloadRow.hidden=true;
+            const size=parseInt(value('size')||document.getElementById('qr-size').value,10)||300;
+            try{new QRCode(wrap,{text:payload,width:size,height:size,colorDark:document.getElementById('qr-dark').value,colorLight:document.getElementById('qr-light').value,correctLevel:QRCode.CorrectLevel[value('ecc')||document.getElementById('qr-ecc').value]});
+              const canvas=wrap.querySelector('canvas');if(canvas){await drawLogo(canvas);canvas.setAttribute('aria-label','Generated QR code');downloadRow.hidden=false;}else{err.hidden=false;err.textContent='QR generation did not produce an image.';}
+            }catch(e){err.hidden=false;err.textContent='Could not generate QR code: '+(e&&e.message?e.message:'unknown error');}
+            resolve();
+          },120));});
         });
-        document.getElementById('qr-download').addEventListener('click', function(){
-          const canvas = document.querySelector('#qr-canvas-wrap canvas');
-          if (!canvas) return;
-          const link = document.createElement('a');
-          link.download = 'qr-code.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        });
+        document.getElementById('qr-reset').addEventListener('click',function(){typeEl.value='url';renderFields();document.getElementById('qr-size').value='300';document.getElementById('qr-dark').value='#111827';document.getElementById('qr-light').value='#ffffff';document.getElementById('qr-ecc').value='H';document.getElementById('qr-logo').value='';logoData='';wrap.innerHTML='';downloadRow.hidden=true;err.hidden=true;});
+        document.getElementById('qr-download').addEventListener('click',function(){const canvas=wrap.querySelector('canvas');if(!canvas)return;const link=document.createElement('a');link.download='utoline-qr-code.png';link.href=canvas.toDataURL('image/png');link.click();});
       })();`,
-    howTo: ['Choose URL/Text, Email or Phone.', 'Enter the content.', 'Click Generate QR code, then download the PNG.'],
+    howTo: ['Choose a QR code type and enter the required details.', 'Customize the size, colors, error correction or optional center logo.', 'Click Generate QR code and download the PNG.'],
     faq: [
-      { q: 'Does this tool upload my QR code content to a server?', a: 'No — the QR code is drawn directly in your browser using a local rendering library; the content you enter is not sent to any server.' },
-      { q: 'Why does it need to load a library?', a: 'Rendering a correct, scannable QR code requires implementing the QR error-correction algorithm precisely, so this tool uses a small, well-established open-source library rather than reinventing that math.' }
+      { q: 'Does this tool upload my content?', a: 'No. QR codes are generated in your browser. The content you enter and optional logo are not sent to Utoline.' },
+      { q: 'Can I make a Wi-Fi QR code?', a: 'Yes. Select Wi-Fi, enter the network name and password, and choose the network security type. Scanning the code can help compatible devices join the network.' },
+      { q: 'Why use high error correction with a logo?', a: 'A logo can cover part of the QR pattern. High error correction helps scanning tolerate some damage, but always test the finished QR code on multiple devices before printing.' }
     ]
   },
+
   {
     slug: 'lorem-ipsum-generator',
     name: 'Lorem Ipsum Generator',

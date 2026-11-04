@@ -6,5 +6,5 @@ window.utoline_CONFIG = {
   gaId: "",                 // e.g. "G-XXXXXXX"; leave empty to disable analytics
   adsenseEnabled: false, // true/false — false means no ad code loads at all
   adsensePublisherId: "", // e.g. "ca-pub-XXXXXXXXXXXXXXXX"
-  siteUrl: ""
+  siteUrl: "https://utoline.us.ci"
 };
